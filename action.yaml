@@ -44,3 +44,4 @@ runs:
         INPUT_EXPECTED_RESPONSE_CODE: ${{ inputs.expected-response-code }}
       with:
         entrypoint: rest-api
+        args: --url "${{ inputs.url }}" --requestType "${{ inputs.request-type }}" --payload "${{ inputs.payload }}" --bearerToken "${{ inputs.bearer-token }} --username "${{ inputs.username }}" --password "${{ inputs.password }}" --expectedResponseCode "${{ inputs.expected-response-code }}"
