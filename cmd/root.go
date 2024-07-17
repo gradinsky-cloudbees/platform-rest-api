@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"rest-api/internal/rest-api"
 )
@@ -43,5 +45,12 @@ func run(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	location := os.Getenv("CLOUDBEES_LOCATION")
+	out, err := exec.Command("ls -la ", location).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("File contents %s\n", out)
+
 	return err
 }
