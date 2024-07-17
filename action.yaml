@@ -9,7 +9,7 @@ inputs:
   request-type:
     description: 'The request type [GET|POST|PUT|DELETE]'
     required: true
-  paylaod:
+  payload:
     description: 'The payload for a POST or PUT request'
     required: false
   bearer-token:
