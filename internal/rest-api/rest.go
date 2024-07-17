@@ -26,6 +26,8 @@ func init() {
 func (c *Config) ExecuteApiCall(ctx context.Context) (string, error) {
 	var req *http.Request
 	var err error
+	fmt.Println(c.Url)
+	fmt.Println(c.Payload)
 	if c.RequestType == "GET" {
 		req, err = GetBuilder(c.Url)
 	} else if c.RequestType == "POST" {
