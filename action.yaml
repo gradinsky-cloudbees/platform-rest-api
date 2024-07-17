@@ -1,0 +1,46 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: action
+name: 'Perform REST API calls against any API'
+description: 'Performs a REST API call against an API. Returns the JSON output'
+inputs:
+  url:
+    description: 'The URL to perform the REST api call against'
+    required: true
+  request-type:
+    description: 'The request type [GET|POST|PUT|DELETE]'
+    required: true
+  paylaod:
+    description: 'The payload for a POST or PUT request'
+    required: false
+  bearer-token:
+    description: 'The Bearer token to be used to authenticate to the API. If this is provided, the username and password will be ignored'
+    required: false
+  username:
+    description: 'The username used to authenticate to the API. If a bearer token is provided, this will be ignored'
+    required: false
+  password:
+    description: 'The password used to authenticate to the API. If a bearer token is provided, this will be ignored'
+    required: false
+  expected-response-code:
+    description: 'The expected response status code. If provided, the action will fail if the status code does not match what is provided'
+    required: false
+outputs:
+  response:
+    value: ${{ steps.rest.outputs.response }}
+    description: 'The JSON response from the API request'
+runs:
+  using: composite
+  steps:
+    - name: Perform REST API request
+      id: rest
+      uses: docker://public.ecr.aws/r1n1q0e5/gradinsky/platform-rest-api:latest
+      env:
+        INPUT_URL: ${{ inputs.url }}
+        INPUT_REQUEST_TYPE: ${{ inputs.request-type }}
+        INPUT_PAYLOAD: ${{ inputs.payload }}
+        INPUT_BEARER_TOKEN: ${{ inputs.bearer-token }}
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_PASSWORD: ${{ inputs.password }}
+        INPUT_EXPECTED_RESPONSE_CODE: ${{ inputs.expected-response-code }}
+      with:
+        entrypoint: rest-api
