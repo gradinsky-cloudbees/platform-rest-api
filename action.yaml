@@ -34,14 +34,6 @@ runs:
     - name: Perform REST API request
       id: rest
       uses: docker://public.ecr.aws/r1n1q0e5/gradinsky/platform-rest-api:latest
-      env:
-        INPUT_URL: ${{ inputs.url }}
-        INPUT_REQUEST_TYPE: ${{ inputs.request-type }}
-        INPUT_PAYLOAD: ${{ inputs.payload }}
-        INPUT_BEARER_TOKEN: ${{ inputs.bearer-token }}
-        INPUT_USERNAME: ${{ inputs.username }}
-        INPUT_PASSWORD: ${{ inputs.password }}
-        INPUT_EXPECTED_RESPONSE_CODE: ${{ inputs.expected-response-code }}
       with:
         entrypoint: rest-api
-        args: --url "${{ inputs.url }}" --requestType "${{ inputs.request-type }}" --payload "${{ inputs.payload }}" --bearerToken "${{ inputs.bearer-token }} --username "${{ inputs.username }}" --password "${{ inputs.password }}" --expectedResponseCode "${{ inputs.expected-response-code }}"
+        args: --url "${{ inputs.url }}" --requestType "${{ inputs.request-type }}" --payload "${{ inputs.payload }}" --bearerToken "${{ inputs.bearer-token }}" --username "${{ inputs.username }}" --password "${{ inputs.password }}" --expectedResponseCode "${{ inputs.expected-response-code }}"
