@@ -3,8 +3,8 @@ package rest_api
 import (
 	"context"
 	"fmt"
-	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"google.golang.org/grpc/codes"
@@ -23,11 +23,10 @@ func init() {
 	Client = &http.Client{}
 }
 
-func (c *Config) ExecuteApiCall(ctx context.Context) (string, error) {
+func (c *Config) ExecuteApiCall(ctx context.Context) (*http.Response, error) {
 	var req *http.Request
 	var err error
-	fmt.Println(c.Url)
-	fmt.Println(c.Payload)
+	//Build request
 	if c.RequestType == "GET" {
 		req, err = GetBuilder(c.Url)
 	} else if c.RequestType == "POST" {
@@ -38,37 +37,44 @@ func (c *Config) ExecuteApiCall(ctx context.Context) (string, error) {
 		req, err = DeleteBuilder(c.Url)
 	}
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if req == nil {
-		return "", status.Error(codes.Internal, "request creation failed")
+		return nil, status.Error(codes.Internal, "request creation failed")
 	}
 
+	//Auth TODO resolve logic for requests that don't need auth
 	var bearer = "Bearer " + c.BearerToken
 	if c.BearerToken == "" {
 		req.SetBasicAuth(c.Username, c.Password)
 	} else {
 		req.Header.Set("Authorization", bearer)
 	}
+	//Perform API call
 	resp, err := Client.Do(req)
+
+	//Error handling time
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
-		fmt.Println("error2:", err)
-		return "", err
+		fmt.Println("Error occurred:", err)
+		return resp, status.Error(codes.Unknown, fmt.Sprintf("ERROR - %a", err.Error()))
 	}
 
-	if resp != nil && (resp.StatusCode < 200 || resp.StatusCode > 299) {
-		fmt.Println("Error3:", resp.Status)
-		return "", err
+	if c.ExpectedResponseCode == "" && resp != nil && (resp.StatusCode < 200 || resp.StatusCode > 299) {
+		fmt.Println("Response code was not a 200:", resp.Status)
+		return resp, MapHttpToGrpcErrorCode(resp)
 	}
 	if resp == nil {
-		fmt.Println("Error4:")
-		return "", err
+		fmt.Println("Response was empty")
+		return nil, status.Error(codes.NotFound, "Response was empty")
 	}
-	bodyBytes, err := io.ReadAll(resp.Body)
-	bodyString := string(bodyBytes)
-	fmt.Println(bodyString)
-	return bodyString, err
+	expectedCode, _ := strconv.Atoi(c.ExpectedResponseCode)
+	if c.ExpectedResponseCode != "" && resp.StatusCode != expectedCode {
+		fmt.Printf("Expected status code (%a) does not match returned status code (%b)\n", resp.StatusCode, expectedCode)
+		return resp, status.Error(codes.OutOfRange, fmt.Sprintf("Expected status code (%a) does not match returned status code (%b)", resp.StatusCode, expectedCode))
+	}
+
+	return resp, err
 }
 
 func GetBuilder(url string) (*http.Request, error) {

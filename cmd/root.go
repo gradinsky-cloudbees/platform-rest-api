@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"log"
+	"io"
 	"os"
 	"path/filepath"
 	"rest-api/internal/rest-api"
@@ -34,24 +34,12 @@ func Execute() error {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	location := os.Getenv("CLOUDBEES_OUTPUTS")
-	fmt.Println(location)
-	entries, err := os.ReadDir(location)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, e := range entries {
-		fmt.Println(e.Name())
-	}
-
-	for _, element := range args {
-		fmt.Println(element)
-	}
 	resp, err := cfg.ExecuteApiCall(cfg)
-	fmt.Println("-----\n", resp, err)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	bodyString := string(bodyBytes)
+	fmt.Println("-----\n", bodyString, err)
 	//Write output
-	err = os.WriteFile(filepath.Join(os.Getenv("CLOUDBEES_OUTPUTS"), "response"), []byte(resp), 0666)
+	err = os.WriteFile(filepath.Join(os.Getenv("CLOUDBEES_OUTPUTS"), "response"), []byte(bodyString), 0666)
 	if err != nil {
 		return err
 	}
