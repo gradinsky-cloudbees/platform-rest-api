@@ -8,17 +8,11 @@ RUN go mod download
 
 COPY . .
 
-RUN ls -la
-
 RUN CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o /usr/local/bin/rest-api main.go
-
-RUN ls -la /usr/local/bin
 
 FROM alpine:3.20
 
 COPY --from=build /usr/local/bin/rest-api /usr/local/bin/rest-api
-
-RUN ls -la /usr/local/bin
 
 WORKDIR /cloudbees/home
 

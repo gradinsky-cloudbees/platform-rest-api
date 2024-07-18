@@ -2,6 +2,7 @@ package rest_api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -57,16 +58,16 @@ func (c *Config) ExecuteApiCall() (*http.Response, error) {
 	//Error handling time
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
-		fmt.Println("Error occurred:", err)
+		log.Println("Error occurred:", err)
 		return resp, status.Error(codes.Unknown, fmt.Sprintf("ERROR - %a", err.Error()))
 	}
 
 	if c.ExpectedResponseCode == "" && resp != nil && (resp.StatusCode < 200 || resp.StatusCode > 299) {
-		fmt.Println("Response code was not a 200:", resp.Status)
+		log.Println("Response code was not 200-299:", resp.Status)
 		return resp, MapHttpToGrpcErrorCode(resp)
 	}
 	if resp == nil {
-		fmt.Println("Response was empty")
+		log.Println("Response was empty")
 		return nil, status.Error(codes.NotFound, "Response was empty")
 	}
 	expectedCode, _ := strconv.Atoi(c.ExpectedResponseCode)
@@ -81,7 +82,7 @@ func GetBuilder(url string) (*http.Request, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		err = status.Error(codes.Unknown, err.Error())
-		fmt.Println("error:", err)
+		log.Println("error:", err)
 		return nil, err
 	}
 	return req, nil
@@ -91,7 +92,7 @@ func PostBuilder(url string, body string) (*http.Request, error) {
 	req, err := http.NewRequest("POST", url, strings.NewReader(body))
 	if err != nil {
 		err = status.Error(codes.Unknown, err.Error())
-		fmt.Println("error:", err)
+		log.Println("error:", err)
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -102,7 +103,7 @@ func PutBuilder(url string, body string) (*http.Request, error) {
 	req, err := http.NewRequest("PUT", url, strings.NewReader(body))
 	if err != nil {
 		err = status.Error(codes.Unknown, err.Error())
-		fmt.Println("error:", err)
+		log.Println("error:", err)
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -113,7 +114,7 @@ func DeleteBuilder(url string) (*http.Request, error) {
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		err = status.Error(codes.Unknown, err.Error())
-		fmt.Println("error:", err)
+		log.Println("error:", err)
 		return nil, err
 	}
 	return req, nil
