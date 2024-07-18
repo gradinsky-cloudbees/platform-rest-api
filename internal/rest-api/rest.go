@@ -1,7 +1,6 @@
 package rest_api
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -23,7 +22,7 @@ func init() {
 	Client = &http.Client{}
 }
 
-func (c *Config) ExecuteApiCall(ctx context.Context) (*http.Response, error) {
+func (c *Config) ExecuteApiCall() (*http.Response, error) {
 	var req *http.Request
 	var err error
 	//Build request
@@ -43,13 +42,15 @@ func (c *Config) ExecuteApiCall(ctx context.Context) (*http.Response, error) {
 		return nil, status.Error(codes.Internal, "request creation failed")
 	}
 
-	//Auth TODO resolve logic for requests that don't need auth
-	var bearer = "Bearer " + c.BearerToken
-	if c.BearerToken == "" {
-		req.SetBasicAuth(c.Username, c.Password)
-	} else {
-		req.Header.Set("Authorization", bearer)
+	//Auth
+	if c.BearerToken != "" || c.Username != "" {
+		if c.BearerToken == "" {
+			req.SetBasicAuth(c.Username, c.Password)
+		} else {
+			req.Header.Set("Authorization", c.BearerToken)
+		}
 	}
+
 	//Perform API call
 	resp, err := Client.Do(req)
 
@@ -70,8 +71,7 @@ func (c *Config) ExecuteApiCall(ctx context.Context) (*http.Response, error) {
 	}
 	expectedCode, _ := strconv.Atoi(c.ExpectedResponseCode)
 	if c.ExpectedResponseCode != "" && resp.StatusCode != expectedCode {
-		fmt.Printf("Expected status code (%a) does not match returned status code (%b)\n", resp.StatusCode, expectedCode)
-		return resp, status.Error(codes.OutOfRange, fmt.Sprintf("Expected status code (%a) does not match returned status code (%b)", resp.StatusCode, expectedCode))
+		return resp, status.Error(codes.OutOfRange, fmt.Sprintf("Expected status code (%v) does not match returned status code (%v)", resp.StatusCode, expectedCode))
 	}
 
 	return resp, err

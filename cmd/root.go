@@ -33,8 +33,15 @@ func Execute() error {
 	return cmd.Execute()
 }
 
-func run(cmd *cobra.Command, args []string) error {
-	resp, err := cfg.ExecuteApiCall(cfg)
+func run(*cobra.Command, []string) error {
+	resp, err := cfg.ExecuteApiCall()
+	if err != nil {
+		err2 := os.WriteFile(filepath.Join(os.Getenv("CLOUDBEES_OUTPUTS"), "response"), []byte(err.Error()), 0666)
+		if err2 != nil {
+			return err2
+		}
+		return err
+	}
 	bodyBytes, err := io.ReadAll(resp.Body)
 	bodyString := string(bodyBytes)
 	fmt.Println("-----\n", bodyString, err)
