@@ -48,7 +48,8 @@ func (c *Config) ExecuteApiCall() (*http.Response, error) {
 		if c.BearerToken == "" {
 			req.SetBasicAuth(c.Username, c.Password)
 		} else {
-			req.Header.Set("Authorization", c.BearerToken)
+			bearer := "Bearer " + c.BearerToken
+			req.Header.Set("Authorization", bearer)
 		}
 	}
 
