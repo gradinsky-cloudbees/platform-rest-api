@@ -60,7 +60,7 @@ func (c *Config) ExecuteApiCall() (*http.Response, error) {
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
 		log.Println("Error occurred:", err)
-		return resp, status.Error(codes.Unknown, fmt.Sprintf("ERROR - %a", err.Error()))
+		return resp, status.Error(codes.Unknown, fmt.Sprintf("ERROR - %v", err.Error()))
 	}
 
 	if c.ExpectedResponseCode == "" && resp != nil && (resp.StatusCode < 200 || resp.StatusCode > 299) {
