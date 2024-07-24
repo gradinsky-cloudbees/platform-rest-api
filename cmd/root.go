@@ -45,7 +45,7 @@ func run(*cobra.Command, []string) error {
 	}
 	bodyBytes, err := io.ReadAll(resp.Body)
 	bodyString := string(bodyBytes)
-	log.Println("-----\n", bodyString)
+	log.Println("Successful API call")
 	//Write output
 	err = os.WriteFile(filepath.Join(os.Getenv("CLOUDBEES_OUTPUTS"), "response"), []byte(bodyString), 0666)
 
