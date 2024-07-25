@@ -8,7 +8,7 @@ MODULE_NAME := $(lastword $(subst /, ,$(shell go list -m)))
 VERSION := $(if $(shell git status --porcelain 2>/dev/null),latest,$(shell git rev-parse HEAD))
 
 
-
+# This isn't my original code, taken (and slightly modified) from other public actions
 .PHONY: build
 build:  ## Build the container image
 	@echo "$(ANSI_BOLD)⚡️ Building container image ...$(ANSI_RESET)"
@@ -76,6 +76,25 @@ format: ## Applies the project code style
 	else \
 	  echo "$(ANSI_BOLD)✅ Lastest 'main' branch has not been tagged yet$(ANSI_RESET)" ; \
 	fi
+
+.PHONY: preview-patch-release
+preview-patch-release: -check-main-already-tagged ## Displays the next a patch release from the main branch
+	@echo "$(ANSI_BOLD)ℹ️  Next patch release version $$(go run .cloudbees/release/next-version.go)$(ANSI_RESET)"
+
+.PHONY: preview-minor-release
+preview-minor-release: -check-main-already-tagged ## Displays the next a minor release from the main branch
+	@echo "$(ANSI_BOLD)ℹ️  Next patch release version $$(go run .cloudbees/release/next-version.go)$(ANSI_RESET)"
+
+.PHONY: preview-major-release
+preview-major-release: -check-main-already-tagged ## Displays the next a major release from the main branch
+	@echo "$(ANSI_BOLD)ℹ️  Next patch release version $$(go run .cloudbees/release/next-version.go)$(ANSI_RESET)"
+
+.PHONY: prepare-patch-release
+prepare-patch-release: -check-main-already-tagged ## Creates a tag for a patch release from the main branch
+	@NEXT_VERSION="$$(go run .cloudbees/release/next-version.go)" ; \
+	echo "$(ANSI_BOLD)⚡️ Tagging version $$NEXT_VERSION ...$(ANSI_RESET)" ; \
+	git tag -f -a -m "chore: $$NEXT_VERSION release" $$NEXT_VERSION main ; \
+	echo "$(ANSI_BOLD)✅ Version $$NEXT_VERSION tagged from branch 'main'$(ANSI_RESET)"
 
 .PHONY: prepare-minor-release
 prepare-minor-release: -check-main-already-tagged ## Creates a tag for a minor release from the main branch
