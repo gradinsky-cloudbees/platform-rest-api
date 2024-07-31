@@ -19,7 +19,7 @@ var (
 	cfg rest_api.Config
 )
 
-// These are the input flags
+// These are the input flags. Created with internal/rest-api/types.go
 func init() {
 	cmd.Flags().StringVar(&cfg.Url, "url", "", "REST API URL")
 	cmd.Flags().StringVar(&cfg.RequestType, "requestType", "", "Request Type [GET|POST|PUT|DELETE]")
@@ -38,7 +38,7 @@ func run(*cobra.Command, []string) error {
 	resp, err := cfg.ExecuteApiCall()
 	if err != nil {
 		log.Println(err.Error())
-		//This is to create an output that can be read by a future step. All unique outputs must be in their own files
+		//This is to create an output that can be read by a future step. All unique outputs must be in their own files.
 		err2 := os.WriteFile(filepath.Join(os.Getenv("CLOUDBEES_OUTPUTS"), "response"), []byte(err.Error()), 0666)
 		if err2 != nil {
 			return err2
@@ -48,7 +48,7 @@ func run(*cobra.Command, []string) error {
 	bodyBytes, err := io.ReadAll(resp.Body)
 	bodyString := string(bodyBytes)
 	log.Println("Successful API call")
-	//Write output
+	//Write output when successful, it parses the response body
 	err = os.WriteFile(filepath.Join(os.Getenv("CLOUDBEES_OUTPUTS"), "response"), []byte(bodyString), 0666)
 
 	return err

@@ -36,6 +36,7 @@ func (c *Config) ExecuteApiCall() (*http.Response, error) {
 	} else if c.RequestType == "DELETE" {
 		req, err = DeleteBuilder(c.Url)
 	}
+	// If errors building the request, error handle
 	if err != nil {
 		return nil, err
 	}

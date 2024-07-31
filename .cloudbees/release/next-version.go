@@ -17,6 +17,7 @@ type Version struct {
 	Patch int
 }
 
+// This is taken from other actions. This itself should probably be made into a module
 // Implement the sort.Interface for []Version based on Major, Minor, Patch
 type ByVersion []Version
 

@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// Maps some common http codes for more descriptive errors. Not my original code
 func MapHttpToGrpcErrorCode(resp *http.Response) error {
 	if resp == nil {
 		return status.Error(codes.Unknown, " The error is unknown or unspecified.")
