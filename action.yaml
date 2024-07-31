@@ -33,7 +33,7 @@ runs:
   steps:
     - name: Perform REST API request
       id: rest
-      uses: docker://public.ecr.aws/r1n1q0e5/gradinsky/platform-rest:latest
+      uses: docker://public.ecr.aws/r1n1q0e5/gradinsky/platform-rest-api:latest
       with:
         entrypoint: rest
         args: --url "${{ inputs.url }}" --requestType "${{ inputs.request-type }}" --payload "${{ inputs.payload }}" --bearerToken "${{ inputs.bearer-token }}" --username "${{ inputs.username }}" --password "${{ inputs.password }}" --expectedResponseCode "${{ inputs.expected-response-code }}"

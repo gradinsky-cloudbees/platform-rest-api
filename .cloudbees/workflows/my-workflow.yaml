@@ -13,7 +13,7 @@ jobs:
         name: Git checkout
         with:
           provider: github
-          repository: gradinsky-cloudbees/platform-rest
+          repository: gradinsky-cloudbees/platform-rest-api
           ref: main
           token: ${{ secrets.gradinsky_github_token }}
       - uses: docker://golang:1.22.1
@@ -32,4 +32,4 @@ jobs:
         name: Build image
         with:
           dockerfile: Dockerfile
-          destination: public.ecr.aws/r1n1q0e5/gradinsky/platform-rest:latest
+          destination: public.ecr.aws/r1n1q0e5/gradinsky/platform-rest-api:latest
