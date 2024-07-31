@@ -29,7 +29,7 @@ jobs:
     outputs:
       output1: $${{ steps.rest-action.outputs.response }}
     steps:
-      - uses: gradinsky-cloudbees/platform-rest-api@v1.0.0
+      - uses: gradinsky-cloudbees/platform-rest@v1.0.0
         name: custom
         id: rest-action
         with:

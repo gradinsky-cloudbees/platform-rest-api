@@ -1,4 +1,4 @@
-package rest_api
+package rest
 
 import (
 	"fmt"
@@ -23,18 +23,18 @@ func init() {
 	Client = &http.Client{}
 }
 
-func (c *Config) ExecuteApiCall() (*http.Response, error) {
+func ExecuteApiCall(requestType string, url string, payload string, bearerToken string, username string, password string, expectedResponseCode string) (*http.Response, error) {
 	var req *http.Request
 	var err error
 	//Build request
-	if c.RequestType == "GET" {
-		req, err = GetBuilder(c.Url)
-	} else if c.RequestType == "POST" {
-		req, err = PostBuilder(c.Url, c.Payload)
-	} else if c.RequestType == "PUT" {
-		req, err = PutBuilder(c.Url, c.Payload)
-	} else if c.RequestType == "DELETE" {
-		req, err = DeleteBuilder(c.Url)
+	if requestType == "GET" {
+		req, err = GetBuilder(url)
+	} else if requestType == "POST" {
+		req, err = PostBuilder(url, payload)
+	} else if requestType == "PUT" {
+		req, err = PutBuilder(url, payload)
+	} else if requestType == "DELETE" {
+		req, err = DeleteBuilder(url)
 	}
 	// If errors building the request, error handle
 	if err != nil {
@@ -45,11 +45,11 @@ func (c *Config) ExecuteApiCall() (*http.Response, error) {
 	}
 
 	//Auth
-	if c.BearerToken != "" || c.Username != "" {
-		if c.BearerToken == "" {
-			req.SetBasicAuth(c.Username, c.Password)
+	if bearerToken != "" || username != "" {
+		if bearerToken == "" {
+			req.SetBasicAuth(username, password)
 		} else {
-			bearer := "Bearer " + c.BearerToken
+			bearer := "Bearer " + bearerToken
 			req.Header.Set("Authorization", bearer)
 		}
 	}
@@ -64,7 +64,7 @@ func (c *Config) ExecuteApiCall() (*http.Response, error) {
 		return resp, status.Error(codes.Unknown, fmt.Sprintf("ERROR - %v", err.Error()))
 	}
 
-	if c.ExpectedResponseCode == "" && resp != nil && (resp.StatusCode < 200 || resp.StatusCode > 299) {
+	if expectedResponseCode == "" && resp != nil && (resp.StatusCode < 200 || resp.StatusCode > 299) {
 		log.Println("Response code was not 200-299:", resp.Status)
 		return resp, MapHttpToGrpcErrorCode(resp)
 	}
@@ -72,8 +72,8 @@ func (c *Config) ExecuteApiCall() (*http.Response, error) {
 		log.Println("Response was empty")
 		return nil, status.Error(codes.NotFound, "Response was empty")
 	}
-	expectedCode, _ := strconv.Atoi(c.ExpectedResponseCode)
-	if c.ExpectedResponseCode != "" && resp.StatusCode != expectedCode {
+	expectedCode, _ := strconv.Atoi(expectedResponseCode)
+	if expectedResponseCode != "" && resp.StatusCode != expectedCode {
 		return resp, status.Error(codes.OutOfRange, fmt.Sprintf("Expected status code (%v) does not match returned status code (%v)", resp.StatusCode, expectedCode))
 	}
 

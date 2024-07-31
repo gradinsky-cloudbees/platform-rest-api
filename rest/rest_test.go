@@ -1,4 +1,4 @@
-package rest_api
+package rest
 
 import (
 	"errors"
@@ -37,11 +37,13 @@ func TestConfig_ExecuteApiCall(t *testing.T) {
 	cfg := Config{
 		Url:                  "https://localhost",
 		BearerToken:          "some bearer token",
+		Username:             "",
+		Password:             "",
 		RequestType:          "POST",
 		Payload:              "{\"name\":\"test\",\"salary\":\"123\",\"age\":\"23\"}",
 		ExpectedResponseCode: "200",
 	}
-	resp, err := cfg.ExecuteApiCall()
+	resp, err := ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,13 +57,14 @@ func TestConfig_ExecuteApiCall(t *testing.T) {
 	// Testing PUT
 	cfg = Config{
 		Url:                  "https://localhost",
+		BearerToken:          "",
 		Username:             "admin",
 		Password:             "admin",
 		RequestType:          "PUT",
 		Payload:              "{\"name\":\"test\",\"salary\":\"123\",\"age\":\"23\"}",
 		ExpectedResponseCode: "200",
 	}
-	resp, err = cfg.ExecuteApiCall()
+	resp, err = ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,10 +72,13 @@ func TestConfig_ExecuteApiCall(t *testing.T) {
 	// Testing GET
 	cfg = Config{
 		Url:                  "https://localhost",
+		BearerToken:          "",
+		Username:             "",
+		Password:             "",
 		RequestType:          "GET",
 		ExpectedResponseCode: "200",
 	}
-	resp, err = cfg.ExecuteApiCall()
+	resp, err = ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,10 +86,13 @@ func TestConfig_ExecuteApiCall(t *testing.T) {
 	//Testing DELETE
 	cfg = Config{
 		Url:                  "https://localhost",
+		BearerToken:          "",
+		Username:             "",
+		Password:             "",
 		RequestType:          "DELETE",
 		ExpectedResponseCode: "200",
 	}
-	resp, err = cfg.ExecuteApiCall()
+	resp, err = ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -100,10 +109,13 @@ func TestConfig_ExecuteApiCall(t *testing.T) {
 	// Ensuring having an expected response code outside 200-299 works
 	cfg = Config{
 		Url:                  "https://localhost",
+		BearerToken:          "",
+		Username:             "",
+		Password:             "",
 		RequestType:          "DELETE",
 		ExpectedResponseCode: "400",
 	}
-	resp, err = cfg.ExecuteApiCall()
+	resp, err = ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err != nil {
 		t.Fatalf("Failed testing expected response outside of 200-299: %v", err)
 	}
@@ -121,10 +133,14 @@ func TestConfig_ExecuteApiCall(t *testing.T) {
 
 	// Test to ensure it fails for a bad request type
 	cfg = Config{
-		Url:         "https://localhost",
-		RequestType: "badType",
+		Url:                  "https://localhost",
+		BearerToken:          "",
+		Username:             "",
+		Password:             "",
+		RequestType:          "badType",
+		ExpectedResponseCode: "",
 	}
-	resp, err = cfg.ExecuteApiCall()
+	resp, err = ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err == nil {
 		t.Fatalf("Failed for incorrect type")
 	}
@@ -132,20 +148,27 @@ func TestConfig_ExecuteApiCall(t *testing.T) {
 	// Test to ensure it fails if expectedResponseCode doesn't match the response when not specified
 	cfg = Config{
 		Url:                  "https://localhost",
+		BearerToken:          "",
+		Username:             "",
+		Password:             "",
 		RequestType:          "GET",
 		ExpectedResponseCode: "405",
 	}
-	resp, err = cfg.ExecuteApiCall()
+	resp, err = ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err == nil {
 		t.Fatal("Failed not matching ExpectedResponseCode")
 	}
 
 	// Test to ensure it fails if response code is outside 200-299 when not providing an expected response code
 	cfg = Config{
-		Url:         "https://localhost",
-		RequestType: "GET",
+		Url:                  "https://localhost",
+		BearerToken:          "",
+		Username:             "",
+		Password:             "",
+		RequestType:          "GET",
+		ExpectedResponseCode: "",
 	}
-	resp, err = cfg.ExecuteApiCall()
+	resp, err = ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err == nil {
 		t.Fatalf("Failed for being outside of 200-299: %v", err)
 	}
