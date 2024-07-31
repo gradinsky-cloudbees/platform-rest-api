@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	rest2 "github.com/gradinsky-cloudbees/platform-rest-api/rest"
+	rest "github.com/gradinsky-cloudbees/platform-rest-api/rest"
 	"github.com/spf13/cobra"
 	"io"
 	"log"
@@ -11,12 +11,12 @@ import (
 
 var (
 	cmd = &cobra.Command{
-		Use:   "rest",
+		Use:   "rest-api",
 		Short: "CLI to execute REST API actions",
 		Long:  "CLI to execute REST API actions",
 		RunE:  run,
 	}
-	cfg rest2.Config
+	cfg rest.Config
 )
 
 // These are the input flags. Created with external/rest/types.go
@@ -35,7 +35,7 @@ func Execute() error {
 }
 
 func run(*cobra.Command, []string) error {
-	resp, err := rest2.ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
+	resp, err := rest.ExecuteApiCall(cfg.RequestType, cfg.Url, cfg.Payload, cfg.BearerToken, cfg.Username, cfg.Password, cfg.ExpectedResponseCode)
 	if err != nil {
 		log.Println(err.Error())
 		//This is to create an output that can be read by a future step. All unique outputs must be in their own files.
