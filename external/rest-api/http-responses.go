@@ -43,7 +43,7 @@ func MapHttpToGrpcErrorCode(resp *http.Response) error {
 				return status.Error(codes.FailedPrecondition, " The operation was rejected due to the current state of the resource.  ")
 			}
 			if code_ >= 500 && code_ < 600 {
-				return status.Error(codes.Internal, "  : An internal server error occurred. ")
+				return status.Error(codes.Internal, "  : An external server error occurred. ")
 			}
 		}
 	}

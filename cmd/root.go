@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/gradinsky-cloudbees/platform-rest-api/internal/rest-api"
+	"github.com/gradinsky-cloudbees/platform-rest-api/external/rest-api"
 	"github.com/spf13/cobra"
 	"io"
 	"log"
@@ -19,7 +19,7 @@ var (
 	cfg rest_api.Config
 )
 
-// These are the input flags. Created with internal/rest-api/types.go
+// These are the input flags. Created with external/rest-api/types.go
 func init() {
 	cmd.Flags().StringVar(&cfg.Url, "url", "", "REST API URL")
 	cmd.Flags().StringVar(&cfg.RequestType, "requestType", "", "Request Type [GET|POST|PUT|DELETE]")
