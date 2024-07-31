@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"gradinsky-cloudbees/platform-rest-api/internal/rest-api"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
-	"rest-api/internal/rest-api"
 )
 
 var (

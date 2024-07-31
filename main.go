@@ -1,8 +1,8 @@
 package main
 
 import (
+	"gradinsky-cloudbees/platform-rest-api/cmd"
 	"log"
-	"rest-api/cmd"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module rest-api
+module gradinsky-cloudbees/platform-rest-api
 
 go 1.21.7
 
