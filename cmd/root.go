@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/gradinsky-cloudbees/platform-rest-api/internal/rest-api"
 	"github.com/spf13/cobra"
-	"gradinsky-cloudbees/platform-rest-api/internal/rest-api"
 	"io"
 	"log"
 	"os"

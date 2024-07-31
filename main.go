@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gradinsky-cloudbees/platform-rest-api/cmd"
+	"github.com/gradinsky-cloudbees/platform-rest-api/cmd"
 	"log"
 )
 
